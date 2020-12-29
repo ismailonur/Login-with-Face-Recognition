@@ -20,36 +20,34 @@ class UI {
         list.innerHTML += html;
     }
 
-
     deleteCourse(element) {
         if (element.classList.contains('delete')) {
-            element.parentElement.parentElement.remove();
+            element.parentElement.parentElement.remove(); 
         }
     }
 }
 
-
 document.addEventListener("DOMContentLoaded", getData);
 
-function getData() {
-    
-    var hesap = "Linkedin";
-    var sifre = 123321;
-
-    const data = new Data(hesap, sifre);
-    const data1 = new Data(hesap, sifre);
-    const data2 = new Data(hesap, sifre);
+async function getData() {
 
     const ui = new UI();
 
-    ui.addCourseToList(data);
-    ui.addCourseToList(data1);
-    ui.addCourseToList(data2);
-
+    try {
+        const database = await firebase.database()
+            .ref(`PASS/1aLxz2xYaAYfrAuAykSdcCG6hhb2`)
+            .once("value")
+        const pass = Object.values(database.val())
+        pass.forEach(element => {
+            const data = new Data(element.name, element.subtitle);
+            ui.addCourseToList(data);
+        });
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 document.getElementById('course-list').addEventListener('click', function (e) {
     const ui = new UI();
     ui.deleteCourse(e.target);
-    ui.showAlert('The Course has been deleted', 'danger');
 })
